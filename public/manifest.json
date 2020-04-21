@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "360-remote",
+  "name": "360 Music Television remote control app",
   "icons": [
     {
       "src": "favicon.ico",
