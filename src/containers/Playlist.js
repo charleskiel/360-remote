@@ -2,31 +2,39 @@ import React from "react";
 import ContentCard from "../components/ContentCard";
 import { List, Typography, Divider } from 'antd';
 class Playlist extends React.Component {
-  //your Video videos code here...
+  	//your Video videos code here...
 
 
-  getVideos = () => {
-    console.log(this.props)
-    if (this.props.playlist.currentPlaylist) {
-      return this.props.playlist.currentPlaylist.map(_video => {
-        return <ContentCard video={this.props.videos.get(_video.split(".")[0])} onClick={this.props.onClick} />
-      })
-    }
-  }
+	getVideos = (_list) => {
+		//console.log(this.props.status)
+		if (this.props.status.broadcastListEvent) {
+			//console.log(`broadcastListEvent ${this.props.status.broadcastListEvent}`)
+		}
+		if (this.props.status.broadcastListEvent.list) {
+			//console.log(`broadcastListEvent ${this.props.status.broadcastListEvent.list}`)
+		
+			return _list.map(_video => {
+				return <ContentCard video={this.props.status.videos[_video]} onClick={this.props.onClick} />
+			})
+		}
+	}
 
-  render() {
-    return (
-
-      <List
-        size="small"
-        header={<div>Header</div>}
-        footer={<div>Footer</div>}
-        bordered
-        dataSource={this.props.playlist.currentPlaylist}
-        renderItem={item => <List.Item>{item.Artist} - {item.Title}</List.Item>}
-      />
-    );
-  }
+	render() {
+		//console.log(this.props.playlist)
+		if (this.props.playlist)
+		{
+			return (
+				this.props.playlist ? <div>{this.getVideos(this.props.playlist.list)}</div> : <div></div>
+			);
+		}
+		else
+		{
+			return (
+				<div></div>
+			)
+		}
+			
+	}
 
 };
 

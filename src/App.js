@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./App.css";
 import VideoLibrary from "./containers/VideoLibrary";
 import Playlist from './containers/Playlist'
 import Controller from './components/Controller'
@@ -10,7 +9,7 @@ import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css
 import { Row, Col, Layout } from 'antd';
 const { Header, Footer, Sider, Content } = Layout;
 import "antd/dist/antd.css";
-import "./index.css";
+import "./App.css";
 
 class App extends Component {
 
@@ -24,94 +23,158 @@ class App extends Component {
 
   state = {
     regToken: "360B91708425",
-    videos: new Map(),
+    videos: [],
     playlist: [],
-    broadcastList: [],
     broadcastStatus: {},
-    controllerStatus: {},
+    broadcastListEvent: {},
+    controllerTickStatus: {},
     serverStatus: {},
 
     packetcount: 0,
 
-    status: {
-      nowPlaying: "Video"
-      //nowPlaying: new Object()
-    }
+    commands: {
+      addToQueue : (videoId) => {
+        this.ws.send(JSON.stringify({ 
+          messageType : "command",
+          data : { 
+            class : "broadcastList",
+            command : "addToQueue",
+            datetime : Date.Now,
+            regtoken : this.regToken,
+            sessionId : this.sessionId,
+            id : videoId } }))
+        },
+      addToPool : (videoId) => {
+        this.ws.send(JSON.stringify({ 
+          messageType : "command",
+          data : { 
+            class : "broadcastList",
+            command : "addToPool",
+            datetime : Date.Now,
+            regtoken : this.regToken,
+            sessionId : this.sessionId,
+            id : videoId } }))
+        },
+      deleteFromPool : (idx) => {
+        this.ws.send(JSON.stringify({ 
+          messageType : "command",
+          data : { 
+            class : "broadcastList",
+            command : "deleteFromPool",
+            datetime : Date.Now,
+            regtoken : this.regToken,
+            sessionId : this.sessionId,
+            id : idx } }))
+        },
+      clearPool : () => {
+        this.ws.send(JSON.stringify({ 
+          messageType : "command",
+          data : { 
+            class : "broadcastList",
+            command : "clearPool",
+            datetime : Date.Now,
+            regtoken : this.regToken,
+            sessionId : this.sessionId } }))
+        },
+      swapSelection : (idx0, idx1) => {
+        this.ws.send(JSON.stringify({ 
+          messageType : "command",
+          data : { 
+            class : "broadcastList",
+            command : "swapSelection",
+            datetime : Date.Now,
+            regtoken : this.regToken,
+            sessionId : this.sessionId,
+            idx0 : idx0,
+            idx1 : idx1 } }))
+        }
+    } 
   }
-
 
 
   ws = new WebSocket('wss://360tv.net:5001');
 
 
   componentDidMount() {
-    fetch('https://www.360tv.net/data/_getvideos.php')
-      .then(response => response.json())
-      .then(response => {
+	fetch('https://www.360tv.net/data/_getvideos.php')
+		.then(response => response.json())
+		.then(response => {
 
-        let map = new Map()
-        response.map(_video => {
-          map.set(_video.id, _video)
-        })
+			let videos = []
+			response.map(_video => {
+				videos[_video.id] = _video
+			})
 
+			this.setState({ videos: videos })
+		})
 
-        this.setState({ videos: map })
-      })
-
-      .catch((error) => {
-        console.error('Error:', error);
-      })
-
-
-    this.ws.onopen = () => {
-      console.log('Connected to Server ', event);
-      this.ws.send(JSON.stringify({ "messageType": "login", "data": { "role": "remote", "datetime": Date.Now, "regtoken": this.state.regToken, "sessionId": this.state.sessionId } }))
-    }
-
-    this.ws.onerror = () => {
-      console.log('Error ', event)
-    }
-
-    this.ws.onclose = () => {
-      console.log('Disconnected ', event)
-    }
+		.catch((error) => {
+			console.error('Error:', error);
+		})
 
 
-    // Listen for messages
-    this.ws.onmessage = () => {
-      //console.log('Message from server ', event.data);
-      let msg = JSON.parse(event.data)
+	this.ws.onopen = () => {
+		console.log('Connected to Server ', event);
+		this.ws.send(JSON.stringify({ "messageType": "login", "data": { "role": "remote", "datetime": Date.Now, "regtoken": this.state.regToken, "sessionId": this.state.sessionId } }))
+	}
 
-      this.setState({ packetcount: this.state.packetcount += 1 })
-      //console.log(msg)
+	this.ws.onerror = () => {
+		console.log('Error ', event)
+	}
 
-      if (msg["messageType"] === "controllerTickStatus") {
-        this.setState({ controllerStatus: msg })
-      }
+	this.ws.onclose = () => {
+		console.log('Disconnected ', event)
+	}
 
-      if (msg.messageType === "playerStatus") { }
-      if (msg.messageType === "systemStatus") { }
-      if (msg.messageType === "serverStatus") { }
-      if (msg.messageType === "userStatus") { }
-      if (msg.messageType === "streamStatus") { }
-      if (msg.messageType === "broadcastListEvent") {
-        this.setState({ broadcastList: msg })
-      }
 
-      if (msg.messageType === "broadcastStatus") {
-        //broadcastpacketcount += 1
-      }
+	// Listen for messages
+	this.ws.onmessage = () => {
+		//console.log('Message from server ', event.data);
+		let msg = JSON.parse(event.data)
 
-      if (msg.messageType === "casparStatus") {
-      }
+		this.setState({ packetcount: this.state.packetcount += 1 })
+		//console.log(msg)
 
-    }
+		if (msg.role === "remote") {
+		console.log("getting Status")
+		this.ws.send(JSON.stringify({ "messageType": "getStatus" }))
+		}
+		else if (msg.messageType === "statusRefresh") {
+		console.log("Got Status!!!!!")
+		console.log(msg)
+
+		this.setState({ ...this.state, ...msg.data })
+		}
+		
+		else {
+		this.setState({ [msg.messageType]: msg })
+		}
+		
+		// if (msg.messageType === "systemStatus") { }
+		// if (msg.messageType === "serverStatus") { }
+		// if (msg.messageType === "userStatus") { }
+		// if (msg.messageType === "streamStatus") { }
+		
+		// if (msg.messageType === "broadcastStatus") {
+		//   //broadcastpacketcount += 1
+		// }
+		
+		// if (msg.messageType === "casparStatus") {
+		// }
+		// if (msg.messageType === "broadcastListEvent") {
+		//   this.setState({ broadcastList: msg })
+		// }
+		
+		//this.setState({ [msg.messageType]: msg })
+
+		//console.log(this.state)
+	
+	}
+
   }
+    
 
-  addvideo = (videoId) => {
-    this.ws.send(JSON.stringify({ "messageType": "command", "data": { "datetime": Date.Now, "regtoken": this.regToken, "sessionId": this.sessionId, "class": "broadcastList", "command": "add", "id": videoId } }))
 
-  }
 
   removevideo = (video) => {
     let _army = this.state.playlist.filter(item => {
@@ -155,34 +218,41 @@ class App extends Component {
 
 
               <Row>
-                <Col span={12}>
+                <Col span={11} style={{margin: "2em"}}>
                   <Controller
-                    videos={this.state.videos}
-                    playlist={this.state.playlist}
-                    status={this.state.status}
-                    controllerStatus={this.state.controllerStatus}
-                    broadcastStatus={this.state.broadcastStatus}
+                    status={this.state}
                     toHHMMSS={this.toHHMMSS}
+                    videos={this.state.videos}
+                    commands={this.state.commands}
                   />
 
                   <VideoLibrary
-                    videos={Array.from(this.state.videos.values())}
+                    videos={this.state.videos}
                     playlist={this.state.playlist}
-                    addvideo={this.addvideo}
-                    removeVideo={this.removevideo}
+                    commands={this.state.commands}
                     broadcastStatus={this.state.broadcastStatus}
                   />
 
                 </Col>
                 <Col span={12}>
-                  <div>
+                  {this.state.videos ?
 
-                    <Playlist
-                      playlist={this.state.broadcastList}
-                      videos={this.state.videos}
-                    />
+                    <div>
+                      <h3>Now Playing</h3>
+                      <Playlist
+                        status={this.state} playlist={this.state.broadcastListEvent}
+                      />
+                      <h4>modeSelections</h4>
+                      <Playlist
+                        status={this.state} playlist={this.state.modeSelections}
+                      />
+                      <h4>modePool</h4>
+                      <Playlist
+                        status={this.state} playlist={this.state.modePool}
+                      />
 
-                  </div>
+                    </div> : <div></div>
+                  }
                 </Col>
               </Row>
 
@@ -213,6 +283,14 @@ class App extends Component {
       </div>
     );
   }
+
+
+
+
+
+
+
+  
 }
 
 export default App;

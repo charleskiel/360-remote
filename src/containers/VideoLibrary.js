@@ -10,8 +10,12 @@ class VideoLibrary extends React.Component {
 	state = {}
 	columns = [
 		{
-			dataField: 'df1', isDummyField: true, text: 'Action',
-			formatter: (cellContent, row) => { return (<h5><span className="label label-success btn btn-xs" onClick={() => this.props.addvideo(row.id)} >PLAY</span></h5>); }
+			dataField: 'df1', isDummyField: true, text: '',
+			formatter: (cellContent, row) => { return (<h5><span className="label label-success btn btn-xs" onClick={() => this.props.commands.addToQueue(row.id)} >Queue</span></h5>); }
+		},
+		{
+			dataField: 'df2', isDummyField: true, text: '',
+			formatter: (cellContent, row) => { return (<h5><span className="label label-warning btn btn-xs" onClick={() => this.props.commands.addToPool(row.id)} >Pool</span></h5>); }
 		},
 		{ dataField: 'id', text: 'ID', sort: true },
 		{ dataField: 'Artist', text: 'Artist', filter: textFilter(), sort: true },
@@ -37,12 +41,13 @@ class VideoLibrary extends React.Component {
 			<div>
 
 				<div className="library">
-					<h1>Collection of all videos</h1>
+					<h4>Library</h4>
+					{this.props.videos.length.toString()} videos in library.
 					{this.props.videos.length > 0 &&
 
 						<BootstrapTable
 							keyField='id'
-							data={this.props.videos}
+							data={this.props.videos.filter(video => {if (video.Artist && video.Artist !== "") {return true}})}
 							columns={this.columns}
 							filter={filterFactory()}
 							caption={`${this.props.videos.length} Videos Available`}

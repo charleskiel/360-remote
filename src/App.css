@@ -1,14 +1,20 @@
-* {
+@import '~antd/dist/antd.dark.css';
+@import '~antd/dist/antd.compact.css';
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
 
-}
+
 
 
 body{
-  padding: 1em;
 }
 .App {
-  
 }
+
+Col {
+margin: 4px;  
+  padding: 2em;
+}
+
 
 .leftPannel{float: left;}
 .rightPannel{float:right;}
@@ -17,8 +23,13 @@ body{
     height: 200px;
     border: 1px;
     border-color: black;
-    padding: 1em;
+    padding: 0em;
     margin-bottom: 3em;
+}
+
+.contentCard{
+	padding: 1px;
+	background-color: cornflowerblue;
 }
 
 .library{
@@ -29,4 +40,7 @@ body{
 }
 .extra{
   font-size: .8rem;
+}
+p{
+	margin-bottom: 0px;
 }
