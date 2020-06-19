@@ -11,29 +11,72 @@ body{
 }
 
 Col {
-margin: 4px;  
-  padding: 2em;
+	margin: 4px;  
+	padding: 2em;
 }
 
 
-.leftPannel{float: left;}
-.rightPannel{float:right;}
+.leftPannel{
+	float: left;
+}
+.rightPannel{
+	float:right;
+}
 
 .controller{
-    height: 200px;
+	height: 200px;
     border: 1px;
-    border-color: black;
-    padding: 0em;
+    padding: 1em;
     margin-bottom: 3em;
+    background-color: lightgray;
+}
+h3{
+	font-weight: 700;
+}
+.contentCard{
+	color: white;
+	padding: .5em;
+	line-height: 1em;
+	height: 2em;
+	margin: .1em;
+	background-color: rgb(72, 70, 80);
+	border-radius: 0%;
+}
+.rotationHeader{
+	border: 1px solid #333333;
+	
+	color: white;
+	padding: .5em;
+	line-height: 1em;
+	height: 2em;
+	margin: .1em;
+	background-color: rgb(72, 70, 80);
+	border-radius: 0%;
+}
+.rotationRow{
+
+	border: 1px solid #868686;
+	padding: .5em;
+	line-height: 1em;
+	height: 2em;
+	margin: .1em;
+	background-color: rgb(238, 234, 234);
+
+	border-radius: 0%;
 }
 
-.contentCard{
-	padding: 1px;
-	background-color: cornflowerblue;
+.statistic{
+	color: white;
+	padding: 5px;
+	margin: .2em;
+	background-color: rgb(78, 77, 85);
+	line-height: 0em;
 }
 
 .library{
     border: 1px;
+    background-color: lightgray;
+    padding: 1em;
 }
 .title{
   font-weight: 400;
@@ -43,4 +86,30 @@ margin: 4px;
 }
 p{
 	margin-bottom: 0px;
+}
+.header{
+	background: black;
+	padding: 0 10px;
+	font-size: 2em ;
+	color: white;
+}
+
+#text-filter-column-Year{
+	
+}
+
+
+input[type=text] {
+  padding: 0;
+  height: 20px;
+  position: relative;
+  left: 0;
+  outline: none;
+  border: 1px solid #333333;
+  border-color: rgba(0, 0, 0, .15);
+  background-color: rgb(240, 242, 245);
+  font-size: 16px;
+}
+.libraryTable{
+	width: 100%;
 }
