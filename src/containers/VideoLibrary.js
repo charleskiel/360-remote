@@ -4,6 +4,7 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import BootstrapTable from 'react-bootstrap-table-next';
 import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
 import paginationFactory from 'react-bootstrap-table2-paginator';
+import { Progress, Tabs } from 'antd'
 
 class VideoLibrary extends React.Component {
 
@@ -22,35 +23,42 @@ class VideoLibrary extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div className={"library"}>
+				<Tabs defaultActiveKey="1"
+					>
+					<Tabs.TabPane tab="Playing" key="1">
 
-				<div className="library">
-					<h4>Library</h4>
-					{this.props.status.videos.length.toString()} videos in library.
-					{this.props.status.videos.length > 0 &&
+						<div>
+							<h4>Library</h4>
+							{this.props.status.videos.length.toString()} videos in library.
+							{this.props.status.videos.length > 0 &&
 
-						<BootstrapTable
-							keyField='id'
-							data={this.props.status.videos.filter(video => {if (video.Artist && video.Artist !== "") {return true}})}
-						columns={this.columns}
-						
-							filter={filterFactory()}
-							caption={`${this.props.status.videos.length} Videos Available`}
-							BootstrapTable={false}
-							rowStyle={{ lineHeight: ".6em", margin: "3px", backgroundColor: "rgb(240, 242, 245)", borderColor : "black", fontSize : ".8em"}}
-							pagination={paginationFactory({
-								sizePerPage: 30,
-								sizePerPageList: [{
-									text: '5th', value: 5
-								}, {
-									text: '10th', value: 10
-								}, {
-									text: 'All', value: this.props.status.videos.length
-								}]
-							})}
-						/>}
-				</div>
-
+								<BootstrapTable
+									keyField='id'
+									data={this.props.status.videos.filter(video => {if (video.Artist && video.Artist !== "") {return true}})}
+								columns={this.columns}
+								
+									filter={filterFactory()}
+									caption={`${this.props.status.videos.length} Videos Available`}
+									BootstrapTable={false}
+									rowStyle={{ lineHeight: ".6em", margin: "3px", backgroundColor: "rgb(240, 242, 245)", borderColor : "black", fontSize : ".8em"}}
+									pagination={paginationFactory({
+										sizePerPage: 30,
+										sizePerPageList: [{
+											text: '5th', value: 5
+										}, {
+											text: '10th', value: 10
+										}, {
+											text: 'All', value: this.props.status.videos.length
+										}]
+									})}
+								/>}
+						</div>
+					</Tabs.TabPane>
+					<Tabs.TabPane tab="Caspar" key="2">
+						{this.props.status.controllerTickStatus.contentId}
+					</Tabs.TabPane>
+				</Tabs>
 			</div>
 		);
 	}

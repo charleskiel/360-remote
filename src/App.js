@@ -5,11 +5,12 @@ import VideoLibrary from "./containers/VideoLibrary";
 import Playlist from './containers/Playlist'
 import Rotation from './containers/Rotation'
 import Controller from './components/Controller'
+import Indicator from './components/Indicator'
 //import BootstrapTable from 'react-bootstrap-table-next';
 import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
 //import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 //import remote from './components/Remote.js'
-import { Statistic, Row, Col, Layout } from 'antd';
+import { Row, Col, Layout } from 'antd';
 const { Header, Footer, Sider, Content } = Layout;
 //import "antd/dist/antd.css";
 
@@ -21,6 +22,14 @@ class App extends Component {
 	casparpacketcount = 0
 	broadcastpacketcount = 0
 	controllerpacketcount = 0
+
+
+	commandData = {
+		datetime: Date.Now,
+		regtoken: this.regToken,
+		sessionId: this.sessionId,
+		commandKey: this.commandKey
+	}
 
 
 	state = {
@@ -57,10 +66,7 @@ class App extends Component {
 					data: {
 						class: "broadcastList",
 						command: "addToQueue",
-						datetime: Date.Now,
-						regtoken: this.regToken,
-						sessionId: this.sessionId,
-						id: videoId
+						...this.commandData
 					}
 				}))
 			},
@@ -70,10 +76,7 @@ class App extends Component {
 					data: {
 						class: "broadcastList",
 						command: "addToPool",
-						datetime: Date.Now,
-						regtoken: this.regToken,
-						sessionId: this.sessionId,
-						id: videoId
+						...this.commandData
 					}
 				}))
 			},
@@ -83,10 +86,7 @@ class App extends Component {
 					data: {
 						class: "broadcastList",
 						command: "deleteFromPool",
-						datetime: Date.Now,
-						regtoken: this.regToken,
-						sessionId: this.sessionId,
-						id: idx
+						...this.commandData
 					}
 				}))
 			},
@@ -96,9 +96,7 @@ class App extends Component {
 					data: {
 						class: "broadcastList",
 						command: "clearPool",
-						datetime: Date.Now,
-						regtoken: this.regToken,
-						sessionId: this.sessionId
+						...this.commandData
 					}
 				}))
 			},
@@ -108,11 +106,9 @@ class App extends Component {
 					data: {
 						class: "broadcastList",
 						command: "swapSelection",
-						datetime: Date.Now,
-						regtoken: this.regToken,
-						sessionId: this.sessionId,
 						idx0: idx0,
-						idx1: idx1
+						idx1: idx1,
+						...this.commandData
 					}
 				}))
 			}
@@ -131,6 +127,7 @@ class App extends Component {
 				let videos = []
 				response.map(_video => {
 					videos[_video.id] = _video
+					videos[_video.id].status = { armed: false, queued: false, pooled: false, selected: false, playing: true}
 				})
 
 				this.setState({ videos: videos })
@@ -157,54 +154,21 @@ class App extends Component {
 
 		// Listen for messages
 		this.ws.onmessage = () => {
-			//console.log('Message from server ', event.data);
+			console.log('Message from server ', event.data);
+
 			let msg = JSON.parse(event.data)
-
 			this.setState({ packetcount: this.state.packetcount += 1 })
-			//console.log(msg)
 
-			if (msg.role === "remote") {
-				console.log("getting Status")
+			switch (msg.messageType) {
+			case "remote" :
 				this.ws.send(JSON.stringify({ "messageType": "getStatus" }))
-
-			}
-			else if (msg.messageType === "statusRefresh") {
-				console.log("Got Status:",msg)
+				break;
+			case "statusRefresh" :
 				this.setState({ ...this.state, ...msg.data })
-
+				break;
+			default :
+				this.setState({ [msg.messageType]: { ...msg, timestamp: Date.now()  } })
 			}
-			else if (msg.messageType === "controllerTickStatus") {
-				this.setState({ [msg.messageType]: msg })
-			}
-			else if (msg.messageType === "rotationSelections") {
-
-				this.setState({ [msg.messageType]: msg })
-				console.log(msg)
-				console.log(this.state)
-			}
-			else {
-				console.log(msg)
-				this.setState({ [msg.messageType]: msg })
-			}
-
-			// if (msg.messageType === "systemStatus") { }
-			// if (msg.messageType === "serverStatus") { }
-			// if (msg.messageType === "userStatus") { }
-			// if (msg.messageType === "streamStatus") { }
-
-			// if (msg.messageType === "broadcastStatus") {
-			//   //broadcastpacketcount += 1
-			// }
-
-			// if (msg.messageType === "casparStatus") {
-			// }
-			// if (msg.messageType === "broadcastListEvent") {
-			//   this.setState({ broadcastList: msg })
-			// }
-
-			//this.setState({ [msg.messageType]: msg })
-
-			//console.log(this.state)
 
 		}
 
@@ -250,14 +214,12 @@ class App extends Component {
 
 					<Header className="header">(360) Remote Control</Header>
 					<Layout>
-						<Sider style={{ color: "white", padding: ".5em" }}>
-							<h5 style={{color: "inherit"}}>Broadcast Stats</h5>
-							<table>
-								<tr>
-									<td style={{ width: "60pc" }}>Viewers:</td>
-									<td style={{ width: "40pc" }}>0</td>
-								</tr>
-							</table>
+						<Sider style={{ color: "white", padding: "1em", }}>
+
+							
+							Viewers:
+							<p>{this.state.broadcastStatus.timestamp ? <Indicator indicator={this.state.broadcastStatus.timestamp} type="square" /> : <div></div>}Broadcast Status</p>
+							<p>{this.state.controllerTickStatus.timestamp ? <Indicator indicator={this.state.controllerTickStatus.timestamp} type="square" /> : <div></div>}Controller</p>
 							<h5 style={{color: "inherit"}}>Server Stats</h5>
 							<table>
 								<tr>
@@ -266,7 +228,7 @@ class App extends Component {
 								</tr>
 								<tr>
 									<td style={{ width: "60pc"}}>Uptime:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{moment.duration(parseInt(this.state.serverStatus.system.uptime), "seconds").format("dd days hh:mm:ss")}</td>
+									<td style={{ width: "40pc", textAlign: "right" }}>{moment.duration(parseInt(this.state.serverStatus.system.uptime), "seconds").format("hh:mm:ss")}</td>
 								</tr>
 								<tr>
 									<td style={{ width: "60pc" }}>Total Mem:</td>
@@ -278,17 +240,18 @@ class App extends Component {
 								</tr>
 								<tr>
 									<td style={{ width: "60pc" }}>Avg Load 1m:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{this.state.serverStatus.system.loadavg[0]}</td>
+									<td style={{ width: "40pc", textAlign: "right" }}>{Math.round(this.state.serverStatus.system.loadavg[0] * 100)}%</td>
 								</tr>
 								<tr>
 									<td style={{ width: "60pc" }}>Avg Load 5m:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{this.state.serverStatus.system.loadavg[1]}</td>
+									<td style={{ width: "40pc", textAlign: "right" }}>{Math.round(this.state.serverStatus.system.loadavg[1] * 100)}%</td>
 								</tr>
 								<tr>
 									<td style={{ width: "60pc" }}>Avg Load 15m:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{this.state.serverStatus.system.loadavg[2]}</td>
+									<td style={{ width: "40pc", textAlign: "right" }}>{Math.round(this.state.serverStatus.system.loadavg[2] * 100)}%</td>
 								</tr>
 							</table>
+							<input id="commandKey" ref="commandKey"></input>
 						</Sider>
 
 						<Content>
@@ -326,7 +289,7 @@ class App extends Component {
 
 														<div>
 															
-														<Playlist status={this.state} playlist={this.state.modeSelections} height={120} />
+															<Playlist status={this.state} playlist={this.state.modeSelections} height={120} />
 															<h5>modePool</h5>
 															<Playlist status={this.state} playlist={this.state.modePool} height={120}/>
 														</div> 
