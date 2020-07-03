@@ -6,17 +6,11 @@ class Playlist extends React.Component {
 
 
 	getVideos = (_list) => {
-		//console.log(this.props.status)
-		if (this.props.status.broadcastListEvent) {
-			//console.log(`broadcastListEvent ${this.props.status.broadcastListEvent}`)
-		}
-		if (this.props.status.broadcastListEvent.list) {
-			//console.log(`broadcastListEvent ${this.props.status.broadcastListEvent.list}`)
+
+			return _list.map((_video) => {
+				return <ContentCard key={_video} video={this.props.status.videos[_video]} onClick={this.props.onClick} />;
+			});
 		
-			return _list.map(_video => {
-				return <ContentCard key={_video} video={this.props.status.videos[_video]} onClick={this.props.onClick} />
-			})
-		}
 	}
 
 	render() {
@@ -24,7 +18,7 @@ class Playlist extends React.Component {
 		if (this.props.playlist)
 		{
 			return (
-				this.props.playlist ?
+				this.props.playlist.list ?
 					<div style={{ height: `${this.props.cellHeight}px` }}>
 					{this.getVideos(this.props.playlist.list)}</div> : <div>[EMPTY]</div>
 			);

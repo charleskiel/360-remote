@@ -154,20 +154,27 @@ class App extends Component {
 
 		// Listen for messages
 		this.ws.onmessage = () => {
-			console.log('Message from server ', event.data);
+			//console.log('Message from server ', event.data);
 
 			let msg = JSON.parse(event.data)
 			this.setState({ packetcount: this.state.packetcount += 1 })
 
 			switch (msg.messageType) {
-			case "remote" :
-				this.ws.send(JSON.stringify({ "messageType": "getStatus" }))
-				break;
-			case "statusRefresh" :
-				this.setState({ ...this.state, ...msg.data })
-				break;
-			default :
-				this.setState({ [msg.messageType]: { ...msg, timestamp: Date.now()  } })
+				case "remote" :
+					this.ws.send(JSON.stringify({ "messageType": "getStatus" }))
+					break;
+				case "statusRefresh":
+					console.log(msg)
+					if (msg.rotationSelections) this.setState({ rotationSelections :  msg.rotationSelections })
+					this.setState({ modePool :  msg.modePool })
+					this.setState({ modeSelections :  msg.modeSelections })
+					this.setState({ broadcastListEvent :  msg.broadcastListEvent })
+					this.setState({ serverStatus :  msg.serverStatus })
+					console.log(this.state)
+					break;
+				default :
+					this.setState({ [msg.messageType]: { ...msg, timestamp: Date.now()  } })
+					//console.log(this.state)
 			}
 
 		}

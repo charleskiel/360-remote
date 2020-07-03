@@ -26,7 +26,6 @@ class Controller extends React.Component {
 
 
 	render() {
-		console.log(this.props.status.controllerTickStatus.playing)
 	return (
 
 
