@@ -15,24 +15,16 @@ const { Header, Footer, Sider, Content } = Layout;
 //import "antd/dist/antd.css";
 
 class App extends Component {
-
-	sessionId = ""
-	nowplayingId = 0
-	packetcount = 0
-	casparpacketcount = 0
-	broadcastpacketcount = 0
-	controllerpacketcount = 0
-
-
-	commandData = {
-		datetime: Date.Now,
-		regtoken: this.regToken,
-		sessionId: this.sessionId,
-		commandKey: this.commandKey
-	}
-
+	sessionId = "";
+	nowplayingId = 0;
+	packetcount = 0;
+	casparpacketcount = 0;
+	broadcastpacketcount = 0;
+	controllerpacketcount = 0;
 
 	state = {
+		sessionId: this.sessionId,
+		commandKey: this.commandKey,
 		regToken: "360B91708425",
 		videos: [],
 		playlist: [],
@@ -47,194 +39,252 @@ class App extends Component {
 				networkInterfaces: "",
 				platform: "",
 				release: "",
-				totalmem: ""
+				totalmem: "",
 			},
 			system: {
 				fremem: "",
 				uptime: "",
 				loadavg: "",
-				uptime: ""
-
-			}},
+				uptime: "",
+			},
+		},
 
 		packetcount: 0,
 
 		commands: {
 			addToQueue: (videoId) => {
-				this.ws.send(JSON.stringify({
-					messageType: "command",
-					data: {
-						class: "broadcastList",
-						command: "addToQueue",
-						...this.commandData
-					}
-				}))
+				console.log(
+					JSON.stringify({
+						messageType: "command",
+						commandData: {
+							
+							datetime: Date.Now,
+							regtoken: this.state.regToken,
+							sessionId: this.state.sessionId,
+							commandKey: this.state.commandKey
+						},
+						data: {
+							class: "broadcastList",
+							command: "addToQueue",
+						},
+					})
+				);
+				this.ws.send(
+					JSON.stringify({
+						messageType: "command",
+						commandData: {
+							
+							datetime: Date.Now,
+							regtoken: this.state.regToken,
+							sessionId: this.state.sessionId,
+							commandKey: this.state.commandKey
+						},
+						data: {
+							class: "broadcastList",
+							command: "addToQueue",
+						},
+					})
+				);
 			},
 			addToPool: (videoId) => {
-				this.ws.send(JSON.stringify({
-					messageType: "command",
-					data: {
-						class: "broadcastList",
-						command: "addToPool",
-						...this.commandData
-					}
-				}))
+				this.ws.send(
+					JSON.stringify({
+						messageType: "command",
+						commandData: {
+							
+							datetime: Date.Now,
+							regtoken: this.state.regToken,
+							sessionId: this.state.sessionId,
+							commandKey: this.state.commandKey
+						},
+						data: {
+							class: "broadcastList",
+							command: "addToPool",
+						},
+					})
+				);
 			},
 			deleteFromPool: (idx) => {
-				this.ws.send(JSON.stringify({
-					messageType: "command",
-					data: {
-						class: "broadcastList",
-						command: "deleteFromPool",
-						...this.commandData
-					}
-				}))
+				this.ws.send(
+					JSON.stringify({
+						messageType: "command",
+						commandData: {
+							
+							datetime: Date.Now,
+							regtoken: this.state.regToken,
+							sessionId: this.state.sessionId,
+							commandKey: this.state.commandKey
+						},
+						data: {
+							class: "broadcastList",
+							command: "deleteFromPool",
+						},
+					})
+				);
 			},
 			clearPool: () => {
-				this.ws.send(JSON.stringify({
-					messageType: "command",
-					data: {
-						class: "broadcastList",
-						command: "clearPool",
-						...this.commandData
-					}
-				}))
+				this.ws.send(
+					JSON.stringify({
+						messageType: "command",
+						commandData: {
+							
+							datetime: Date.Now,
+							regtoken: this.state.regToken,
+							sessionId: this.state.sessionId,
+							commandKey: this.state.commandKey
+						},
+						data: {
+							class: "broadcastList",
+							command: "clearPool",
+						},
+					})
+				);
 			},
 			swapSelection: (idx0, idx1) => {
-				this.ws.send(JSON.stringify({
-					messageType: "command",
-					data: {
-						class: "broadcastList",
-						command: "swapSelection",
-						idx0: idx0,
-						idx1: idx1,
-						...this.commandData
-					}
-				}))
-			}
-		}
-	}
+				this.ws.send(
+					JSON.stringify({
+						messageType: "command",
+						commandData: {
+							
+							datetime: Date.Now,
+							regtoken: this.state.regToken,
+							sessionId: this.state.sessionId,
+							commandKey: this.state.commandKey
+						},
+						data: {
+							class: "broadcastList",
+							command: "swapSelection",
+							idx0: idx0,
+							idx1: idx1,
+						},
+					})
+				);
+			},
+		},
+	};
 
+	commandData = () => {
+		return {
+		datetime: Date.Now,
+		regtoken: this.state.regToken,
+		sessionId: this.state.sessionId,
+		commandKey: this.state.commandKey}
+	};
 
-	ws = new WebSocket('wss://360tv.net:5001');
-
+	ws = new WebSocket("wss://360tv.net:5001");
 
 	componentDidMount() {
-		fetch('https://www.360tv.net/data/_getvideos.php')
-			.then(response => response.json())
-			.then(response => {
+		fetch("https://www.360tv.net/data/_getvideos.php")
+			.then((response) => response.json())
+			.then((response) => {
+				let videos = [];
+				response.map((_video) => {
+					videos[_video.id] = _video;
+					videos[_video.id].status = { armed: false, queued: false, pooled: false, selected: false, playing: true };
+				});
 
-				let videos = []
-				response.map(_video => {
-					videos[_video.id] = _video
-					videos[_video.id].status = { armed: false, queued: false, pooled: false, selected: false, playing: true}
-				})
-
-				this.setState({ videos: videos })
+				this.setState({ videos: videos });
 			})
 
 			.catch((error) => {
-				console.error('Error:', error);
-			})
-
+				console.error("Error:", error);
+			});
 
 		this.ws.onopen = () => {
-			console.log('Connected to Server ', event);
-			this.ws.send(JSON.stringify({ "messageType": "login", "data": { "role": "remote", "datetime": Date.Now, "regtoken": this.state.regToken, "sessionId": this.state.sessionId } }))
-		}
+			console.log("Connected to Server ", event);
+			this.ws.send(JSON.stringify({ messageType: "login", data: { role: "remote", datetime: Date.Now, regtoken: this.state.regToken, sessionId: this.state.sessionId } }));
+		};
 
 		this.ws.onerror = () => {
-			console.log('Error ', event)
-		}
+			console.log("Error ", event);
+		};
 
 		this.ws.onclose = () => {
-			console.log('Disconnected ', event)
-		}
-
+			console.log("Disconnected ", event);
+		};
 
 		// Listen for messages
 		this.ws.onmessage = () => {
 			//console.log('Message from server ', event.data);
 
-			let msg = JSON.parse(event.data)
-			this.setState({ packetcount: this.state.packetcount += 1 })
+			let msg = JSON.parse(event.data);
+			this.setState({ packetcount: (this.state.packetcount += 1) });
 
 			switch (msg.messageType) {
-				case "remote" :
-					this.ws.send(JSON.stringify({ "messageType": "getStatus" }))
+				case "remote":
+					this.ws.send(JSON.stringify({ messageType: "getStatus" }));
 					break;
 				case "statusRefresh":
-					console.log(msg)
-					if (msg.rotationSelections) this.setState({ rotationSelections :  msg.rotationSelections })
-					this.setState({ modePool :  msg.modePool })
-					this.setState({ modeSelections :  msg.modeSelections })
-					this.setState({ broadcastListEvent :  msg.broadcastListEvent })
-					this.setState({ serverStatus :  msg.serverStatus })
-					console.log(this.state)
+					console.log(msg);
+					if (msg.rotationSelections) this.setState({ rotationSelections: msg.rotationSelections });
+					this.setState({ modePool: msg.modePool });
+					this.setState({ modeSelections: msg.modeSelections });
+					this.setState({ broadcastListEvent: msg.broadcastListEvent });
+					this.setState({ serverStatus: msg.serverStatus });
+					console.log(this.state);
 					break;
-				default :
-					this.setState({ [msg.messageType]: { ...msg, timestamp: Date.now()  } })
-					//console.log(this.state)
+				default:
+					this.setState({ [msg.messageType]: { ...msg, timestamp: Date.now() } });
+				//console.log(this.state)
 			}
-
-		}
-
+		};
 	}
-
-
-
 
 	removevideo = (video) => {
-		let _army = this.state.playlist.filter(item => {
-			return item !== video
-		})
-		this.setState({ playlist: _army })
-	}
-
+		let _army = this.state.playlist.filter((item) => {
+			return item !== video;
+		});
+		this.setState({ playlist: _army });
+	};
 
 	toHHMMSS = (time) => {
 		var sec_num = parseInt(time, 10); // don't forget the second param
 		var hours = Math.floor(sec_num / 3600);
-		var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-		var seconds = sec_num - (hours * 3600) - (minutes * 60);
+		var minutes = Math.floor((sec_num - hours * 3600) / 60);
+		var seconds = sec_num - hours * 3600 - minutes * 60;
 
-		if (hours < 10) { hours = "0" + hours; }
-		if (minutes < 10) { minutes = "0" + minutes; }
-		if (seconds < 10) { seconds = "0" + seconds; }
-		return hours + ':' + minutes + ':' + seconds;
-	}
+		if (hours < 10) {
+			hours = "0" + hours;
+		}
+		if (minutes < 10) {
+			minutes = "0" + minutes;
+		}
+		if (seconds < 10) {
+			seconds = "0" + seconds;
+		}
+		return hours + ":" + minutes + ":" + seconds;
+	};
 
-
+	setCommandkey = (e) => {
+		console.log(e.target.value)
+		this.setState({ commandKey: e.target.value }); 
+		console.log(this.state)
+	};
 
 	style = {
 		statistic: {
-			color: "white"
-		}
-	}
-
+			color: "white",
+		},
+	};
 
 	render() {
 		return (
 			<div className="App">
-
 				<Layout>
-
 					<Header className="header">(360) Remote Control</Header>
 					<Layout>
-						<Sider style={{ color: "white", padding: "1em", }}>
-
-							
+						<Sider style={{ color: "white", padding: "1em" }}>
 							Viewers:
 							<p>{this.state.broadcastStatus.timestamp ? <Indicator indicator={this.state.broadcastStatus.timestamp} type="square" /> : <div></div>}Broadcast Status</p>
 							<p>{this.state.controllerTickStatus.timestamp ? <Indicator indicator={this.state.controllerTickStatus.timestamp} type="square" /> : <div></div>}Controller</p>
-							<h5 style={{color: "inherit"}}>Server Stats</h5>
+							<h5 style={{ color: "inherit" }}>Server Stats</h5>
 							<table>
 								<tr>
-									<td style={{ width: "60pc"}}>Server Time:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{moment.unix(parseInt(this.state.serverStatus.system.epoch /1000)).format("LTS")}</td>
+									<td style={{ width: "60pc" }}>Server Time:</td>
+									<td style={{ width: "40pc", textAlign: "right" }}>{moment.unix(parseInt(this.state.serverStatus.system.epoch / 1000)).format("LTS")}</td>
 								</tr>
 								<tr>
-									<td style={{ width: "60pc"}}>Uptime:</td>
+									<td style={{ width: "60pc" }}>Uptime:</td>
 									<td style={{ width: "40pc", textAlign: "right" }}>{moment.duration(parseInt(this.state.serverStatus.system.uptime), "seconds").format("hh:mm:ss")}</td>
 								</tr>
 								<tr>
@@ -258,85 +308,59 @@ class App extends Component {
 									<td style={{ width: "40pc", textAlign: "right" }}>{Math.round(this.state.serverStatus.system.loadavg[2] * 100)}%</td>
 								</tr>
 							</table>
-							<input id="commandKey" ref="commandKey"></input>
+							<input id="commandKey" ref="commandKey" onChange={(evt) => this.setCommandkey(evt)}></input>
 						</Sider>
 
 						<Content>
-							<Row style={{ }}>
+							<Row style={{}}>
 								<Col span={11} style={{ margin: ".5em" }}>
 									<h3>Controller</h3>
-									<Controller
-										status={this.state}
-										toHHMMSS={this.toHHMMSS}
-										/>
+									<Controller status={this.state} toHHMMSS={this.toHHMMSS} />
 
-									<VideoLibrary
-
-										status={this.state}
-										
-									/>
-
+									<VideoLibrary status={this.state} />
 								</Col>
 								<Col span={12} style={{ margin: ".5em" }}>
 									<table style={{ width: "100%" }}>
 										<tr>
-											<td><h3>Current Playlist</h3></td>
-											<td><h3>Selections</h3></td>
+											<td>
+												<h3>Current Playlist</h3>
+											</td>
+											<td>
+												<h3>Selections</h3>
+											</td>
 										</tr>
-										{this.state.videos ?
+										{this.state.videos ? (
 											<tr>
-												<td style={{ verticalAlign: "top", width: "50%", backgroundColor: "lightgrey", padding: ".5em" ,borderRight: "5px solid #f0f2f5"}}>
-																								
+												<td style={{ verticalAlign: "top", width: "50%", backgroundColor: "lightgrey", padding: ".5em", borderRight: "5px solid #f0f2f5" }}>
 													<small>This is the immediate queue.</small>
-													<Playlist status={this.state} playlist={this.state.broadcastListEvent} height={200}/>
+													<Playlist status={this.state} playlist={this.state.broadcastListEvent} height={200} />
 												</td>
 												<td style={{ verticalAlign: "top", width: "50%", backgroundColor: "lightgrey", padding: ".5em" }}>
-														<h5>Mode Selections</h5>
-														<small>Selections for vote mode. Will auto select when no vote or not in vote mode.</small>
+													<h5>Mode Selections</h5>
+													<small>Selections for vote mode. Will auto select when no vote or not in vote mode.</small>
 
-														<div>
-															
-															<Playlist status={this.state} playlist={this.state.modeSelections} height={120} />
-															<h5>modePool</h5>
-															<Playlist status={this.state} playlist={this.state.modePool} height={120}/>
-														</div> 
+													<div>
+														<Playlist status={this.state} playlist={this.state.modeSelections} height={120} />
+														<h5>modePool</h5>
+														<Playlist status={this.state} playlist={this.state.modePool} height={120} />
+													</div>
 												</td>
 											</tr>
-											:
+										) : (
 											<div></div>
-												}
-
+										)}
 									</table>
 									<h4>Rotation</h4>
-									{this.state.rotationSelections ? <Rotation status={this.state}   />
-										:
-										<div></div>}
-									
-									
+									{this.state.rotationSelections ? <Rotation status={this.state} /> : <div></div>}
 								</Col>
 							</Row>
-					<Footer>Footer</Footer>
-
+							<Footer>Footer</Footer>
 						</Content>
 					</Layout>
 				</Layout>
-
-
-
-
-
-
 			</div>
 		);
 	}
-
-
-
-
-
-
-
-
 }
 
 export default App;
