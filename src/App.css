@@ -151,20 +151,20 @@ p{
 
 
 
-#commandKey {
-  padding: 1;
-  height: 20px;
-  position: relative;
-  left: 0;
-  outline: none;
-  border-color: rgba(0, 0, 0, 1);
-  background-color: rgb(34, 50, 75);
-  font-size: 12px;
+
+
+.commandKeyStyle{
+	background-color: rgb(34, 50, 75);
+
 }
-
-
-
-
+.commandKeyStyleOK{
+	transition: background-color 1s;
+	background-color: "green";
+}
+.commandKeyStyleERROR{
+	transition: background-color 1s;
+	background-color: "red";
+}
 
 
 input[type=text] {

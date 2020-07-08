@@ -21,11 +21,22 @@ class VideoLibrary extends React.Component {
 	
 	componentWillMount() {}
 
+	responseList = (_list) => {
+
+		return _list.map((_response) => {
+			return <p>
+				{_response.response === "OK" ? 
+					<span style={{backgroundColor : "green"}} >{_response.response}</span>
+					:<span style={{backgroundColor : "red"}} >{_response.response}</span>
+				} : {_response.commandResponse} {_response.command} {_response.class}
+					</p>;
+		});
+	
+}
 	render() {
 		return (
 			<div className={"library"}>
-				<Tabs defaultActiveKey="1"
-					>
+				<Tabs defaultActiveKey="1">
 					<Tabs.TabPane tab="Playing" key="1">
 
 						<div>
@@ -57,6 +68,9 @@ class VideoLibrary extends React.Component {
 					</Tabs.TabPane>
 					<Tabs.TabPane tab="Caspar" key="2">
 						{this.props.status.controllerTickStatus.contentId}
+					</Tabs.TabPane>
+					<Tabs.TabPane tab="Command log" key="3">
+						{this.props.status.commandResponses.length > 0 ? <div>{this.responseList(this.props.status.commandResponses)}</div> : <div></div>}
 					</Tabs.TabPane>
 				</Tabs>
 			</div>

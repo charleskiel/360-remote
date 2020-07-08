@@ -25,12 +25,14 @@ class App extends Component {
 	state = {
 		sessionId: this.sessionId,
 		commandKey: this.commandKey,
+		commandKeyStyle: "commandKeyStyle",
 		regToken: "360B91708425",
 		videos: [],
 		playlist: [],
 		broadcastStatus: {},
 		broadcastListEvent: {},
 		controllerTickStatus: {},
+		commandResponses: [],
 		serverStatus: {
 			os: {
 				type: "",
@@ -52,54 +54,28 @@ class App extends Component {
 		packetcount: 0,
 
 		commands: {
-			addToQueue: (videoId) => {
-				console.log(
-					JSON.stringify({
-						messageType: "command",
-						commandData: {
-							
-							datetime: Date.Now,
-							regtoken: this.state.regToken,
-							sessionId: this.state.sessionId,
-							commandKey: this.state.commandKey
-						},
-						data: {
-							class: "broadcastList",
-							command: "addToQueue",
-						},
-					})
-				);
+			addToQueue: (id) => {
 				this.ws.send(
 					JSON.stringify({
-						messageType: "command",
-						commandData: {
-							
-							datetime: Date.Now,
-							regtoken: this.state.regToken,
-							sessionId: this.state.sessionId,
-							commandKey: this.state.commandKey
-						},
+						messageType : "command",
+						commandData: this.commandData(),
 						data: {
 							class: "broadcastList",
 							command: "addToQueue",
+							id: id
 						},
 					})
 				);
 			},
-			addToPool: (videoId) => {
+			addToPool: (id) => {
 				this.ws.send(
 					JSON.stringify({
-						messageType: "command",
-						commandData: {
-							
-							datetime: Date.Now,
-							regtoken: this.state.regToken,
-							sessionId: this.state.sessionId,
-							commandKey: this.state.commandKey
-						},
+						messageType : "command",
+						commandData: this.commandData(),
 						data: {
 							class: "broadcastList",
 							command: "addToPool",
+							id: id
 						},
 					})
 				);
@@ -107,17 +83,12 @@ class App extends Component {
 			deleteFromPool: (idx) => {
 				this.ws.send(
 					JSON.stringify({
-						messageType: "command",
-						commandData: {
-							
-							datetime: Date.Now,
-							regtoken: this.state.regToken,
-							sessionId: this.state.sessionId,
-							commandKey: this.state.commandKey
-						},
+						messageType : "command",
+						commandData: this.commandData(),
 						data: {
 							class: "broadcastList",
 							command: "deleteFromPool",
+							idx: idx
 						},
 					})
 				);
@@ -125,14 +96,8 @@ class App extends Component {
 			clearPool: () => {
 				this.ws.send(
 					JSON.stringify({
-						messageType: "command",
-						commandData: {
-							
-							datetime: Date.Now,
-							regtoken: this.state.regToken,
-							sessionId: this.state.sessionId,
-							commandKey: this.state.commandKey
-						},
+						messageType : "command",
+						commandData: this.commandData(),
 						data: {
 							class: "broadcastList",
 							command: "clearPool",
@@ -143,14 +108,8 @@ class App extends Component {
 			swapSelection: (idx0, idx1) => {
 				this.ws.send(
 					JSON.stringify({
-						messageType: "command",
-						commandData: {
-							
-							datetime: Date.Now,
-							regtoken: this.state.regToken,
-							sessionId: this.state.sessionId,
-							commandKey: this.state.commandKey
-						},
+						messageType : "command",
+						commandData: this.commandData(),
 						data: {
 							class: "broadcastList",
 							command: "swapSelection",
@@ -214,6 +173,13 @@ class App extends Component {
 				case "remote":
 					this.ws.send(JSON.stringify({ messageType: "getStatus" }));
 					break;
+				case "commandResponse":
+					this.setState ( prevState => {
+						return {...prevState, ["commandResponses"] : [...prevState.commandResponses, msg]}
+					})
+					console.log(msg)
+					this.alertCommandkey(msg.response)
+					break;
 				case "statusRefresh":
 					console.log(msg);
 					if (msg.rotationSelections) this.setState({ rotationSelections: msg.rotationSelections });
@@ -256,16 +222,19 @@ class App extends Component {
 	};
 
 	setCommandkey = (e) => {
-		console.log(e.target.value)
+		console.log(e)
 		this.setState({ commandKey: e.target.value }); 
 		console.log(this.state)
 	};
 
-	style = {
-		statistic: {
-			color: "white",
-		},
-	};
+	alertCommandkey = (_status) => {
+		console.log(_status)
+		this.setState({ "commandKeyStyle": _status === "OK" ? "commandKeyStyleOK" : "commandKeyStyleERROR" })
+		setTimeout(() => { this.setState({ "commandKeyStyle": "commandKeyStyle" }), 10000 })
+
+
+	}
+	
 
 	render() {
 		return (
@@ -308,7 +277,8 @@ class App extends Component {
 									<td style={{ width: "40pc", textAlign: "right" }}>{Math.round(this.state.serverStatus.system.loadavg[2] * 100)}%</td>
 								</tr>
 							</table>
-							<input id="commandKey" ref="commandKey" onChange={(evt) => this.setCommandkey(evt)}></input>
+							<small>Enter "360" into the box below to control.</small>
+							<input id="commandKey" ref="commandKey" onChange={(evt) => this.setCommandkey(evt)} className={this.state.commandKeyStyle}></input>
 						</Sider>
 
 						<Content>
@@ -331,9 +301,32 @@ class App extends Component {
 										</tr>
 										{this.state.videos ? (
 											<tr>
-												<td style={{ verticalAlign: "top", width: "50%", backgroundColor: "lightgrey", padding: ".5em", borderRight: "5px solid #f0f2f5" }}>
+												<td style={{ verticalAlign: "top", width: "50%", backgroundColor: "lightgrey", padding: ".5em", borderRight: "5px solid #f0f2f5", position: "relative" }}>
 													<small>This is the immediate queue.</small>
 													<Playlist status={this.state} playlist={this.state.broadcastListEvent} height={200} />
+													<div style={{
+														display: "inline - block",
+														position: "absolute",
+														bottom: "0",
+														width: "100%",
+														height: "2.5rem"
+													}}
+														>
+														<span
+															style={{ display: "inline - block" }}
+															className="label label-success btn btn-xs"
+															onClick={() => this.state.commands.clearPool()}
+														>
+															Clear
+														</span>
+														<span
+															style={{ display: "inline - block" }}
+															className="label label-warning btn btn-xs"
+															//onClick={() => this.state.commands.addToPool(row.id)}
+														>
+															Fill
+														</span>
+													</div>
 												</td>
 												<td style={{ verticalAlign: "top", width: "50%", backgroundColor: "lightgrey", padding: ".5em" }}>
 													<h5>Mode Selections</h5>
@@ -341,7 +334,14 @@ class App extends Component {
 
 													<div>
 														<Playlist status={this.state} playlist={this.state.modeSelections} height={120} />
-														<h5>modePool</h5>
+														<h5>modePool</h5> 
+														<span
+															style={{ display: "inline - block" }}
+															className="label label-success btn btn-xs"
+															onClick={() => this.state.commands.clearPool()}
+														>
+															Clear
+														</span>
 														<Playlist status={this.state} playlist={this.state.modePool} height={120} />
 													</div>
 												</td>
