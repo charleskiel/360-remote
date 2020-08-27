@@ -1,6 +1,6 @@
 import React from "react";
 import { Card as div, Row, Col, Layout } from 'antd';
-import "../App.css";
+import "./ContentCard.scss";
 import {MoreOutlined } from '@ant-design/icons';	
 import Indicator from "./Indicator"
 import moment from "moment"
