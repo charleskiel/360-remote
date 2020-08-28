@@ -2,7 +2,11 @@ import React from "react";
 import VideoCard from "../components/ContentCard";
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import BootstrapTable from 'react-bootstrap-table-next';
-import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
+
+//import "./../dataTables.bootstrap.css";
+//import "./../responsive.dataTables.min.css";
+//
+import "react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css";
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import { Progress, Tabs } from 'antd'
 
@@ -47,7 +51,7 @@ class VideoLibrary extends React.Component {
 								<BootstrapTable
 									keyField='id'
 									data={this.props.status.videos.filter(video => {if (video.Artist && video.Artist !== "") {return true}})}
-								columns={this.columns}
+									columns={this.columns}
 								
 									filter={filterFactory()}
 									caption={`${this.props.status.videos.length} Videos Available`}

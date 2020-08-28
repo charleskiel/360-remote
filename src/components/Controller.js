@@ -3,14 +3,13 @@ import Indicator from "./Indicator"
 import { Progress, Tabs,Button } from 'antd'
 import Icon from "@ant-design/icons/lib/components/Icon";
 import "./Controller.scss";
-import videojs from "video.js";
+//import videojs from "video.js";
 //import "video.js/dist/video-js.css";
 
 import { MoreOutlined } from '@ant-design/icons';
 
-import "https://vjs.zencdn.net/7.8.4/video-js.css"
-import "https://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"
 
+    
 const { TabPane } = Tabs;
 class Controller extends React.Component {
 	//start here with your code for step one
@@ -29,7 +28,13 @@ class Controller extends React.Component {
 		videojs(video);
     	}
 
-	
+	componentDidMount = () => {
+		    this.player = videojs(this.videoNode, this.videoJsOptions, function onPlayerReady() {
+				console.log("Video.js Ready", this);
+			});
+	}
+
+
 	state = {
 		selectedVideo: null,
 	};
@@ -85,9 +90,25 @@ class Controller extends React.Component {
 									</Button>
 								</tr>
 							</table>
-
-							<video ref={this.startVideo} width={180} height={320} className="video-js vjs-default-skin" controls>
-								<source src={this.props.source} type="application/x-mpegURL" />
+							<video
+								ref={(node) => (this.videoNode = node)}
+								id="my-video"
+								class="video-js"
+								controls
+								preload="auto"
+								width="640"
+								height="264"
+								poster="../images/Image1.png"
+								data-setup="{}"
+							>
+								{/* 
+							<p class="vjs-no-js">
+								To view this video please enable JavaScript, and consider upgrading to a
+								web browser that
+								<a href="https://videojs.com/html5-video-support/" target="_blank"
+								>supports HTML5 video</a
+								>
+							</p> */}
 							</video>
 						</TabPane>
 
