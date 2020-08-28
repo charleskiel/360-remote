@@ -11,7 +11,6 @@ class ContentCard
 	render() {
 	if (this.props.video) {
 		//let cardtitle = `${this.props.video.Artist} - ${this.props.video.Title}`
-		//if (this.props.video.contentType === "MusicVideo") {
 		return (
 			<div className="contentCard" >
 				<div style={{ float: "left" }} ><MoreOutlined />{this.props.video.Artist} - {this.props.video.Title} 
