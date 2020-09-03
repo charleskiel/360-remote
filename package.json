@@ -26,6 +26,7 @@
     "react-bootstrap-table2-paginator": "^2.1.2",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
+    "react-video-js-player": "^1.1.1",
     "videojs-contrib-hls": "^5.15.0"
   },
   "scripts": {
