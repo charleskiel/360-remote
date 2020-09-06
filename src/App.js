@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import VideoLibrary from "./containers/VideoLibrary";
 import Playlist from './containers/Playlist'
 import Rotation from './containers/Rotation'
+import Sidebar from './containers/Sidebar'
 import Controller from './components/Controller'
 import Indicator from './components/Indicator'
 //import BootstrapTable from 'react-bootstrap-table-next';
@@ -55,6 +56,7 @@ class App extends Component {
 
 		commands: {
 			addToQueue: (id) => {
+				console.log(id)
 				this.ws.send(
 					JSON.stringify({
 						messageType : "command",
@@ -167,7 +169,7 @@ class App extends Component {
 			//console.log('Message from server ', event.data);
 
 			let msg = JSON.parse(event.data);
-			this.setState({ packetcount: (this.state.packetcount += 1) });
+			//this.setState({ packetcount: (this.state.packetcount += 1) });
 
 			switch (msg.messageType) {
 				case "remote":
@@ -230,9 +232,7 @@ class App extends Component {
 	alertCommandkey = (_status) => {
 		console.log(_status)
 		this.setState({ "commandKeyStyle": _status === "OK" ? "commandKeyStyleOK" : "commandKeyStyleERROR" })
-		setTimeout(() => { this.setState({ "commandKeyStyle": "commandKeyStyle" }), 10000 })
-
-
+		setTimeout(() => { this.setState({ "commandKeyStyle": "commandKeyStyle" }), 2000 })
 	}
 	
 
@@ -242,44 +242,7 @@ class App extends Component {
 				<Layout>
 					<Header className="header">(360) Remote Control</Header>
 					<Layout>
-						<Sider style={{ color: "white", padding: "1em" }}>
-							Viewers:
-							<p>{this.state.broadcastStatus.timestamp ? <Indicator indicator={this.state.broadcastStatus.timestamp} type="square" /> : <div></div>}Broadcast Status</p>
-							<p>{this.state.controllerTickStatus.timestamp ? <Indicator indicator={this.state.controllerTickStatus.timestamp} type="square" /> : <div></div>}Controller</p>
-							<h5 style={{ color: "inherit" }}>Server Stats</h5>
-							<table>
-								<tr>
-									<td style={{ width: "60pc" }}>Server Time:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{moment.unix(parseInt(this.state.serverStatus.system.epoch / 1000)).format("LTS")}</td>
-								</tr>
-								<tr>
-									<td style={{ width: "60pc" }}>Uptime:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{moment.duration(parseInt(this.state.serverStatus.system.uptime), "seconds").format("hh:mm:ss")}</td>
-								</tr>
-								<tr>
-									<td style={{ width: "60pc" }}>Total Mem:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{this.state.serverStatus.system.totalmem}</td>
-								</tr>
-								<tr>
-									<td style={{ width: "60pc" }}>Free Mem:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{this.state.serverStatus.system.fremem}</td>
-								</tr>
-								<tr>
-									<td style={{ width: "60pc" }}>Avg Load 1m:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{Math.round(this.state.serverStatus.system.loadavg[0] * 100)}%</td>
-								</tr>
-								<tr>
-									<td style={{ width: "60pc" }}>Avg Load 5m:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{Math.round(this.state.serverStatus.system.loadavg[1] * 100)}%</td>
-								</tr>
-								<tr>
-									<td style={{ width: "60pc" }}>Avg Load 15m:</td>
-									<td style={{ width: "40pc", textAlign: "right" }}>{Math.round(this.state.serverStatus.system.loadavg[2] * 100)}%</td>
-								</tr>
-							</table>
-							<small>Enter "360" into the box below to control.</small>
-							<input id="commandKey" ref="commandKey" onChange={(evt) => this.setCommandkey(evt)} className={this.state.commandKeyStyle}></input>
-						</Sider>
+						<Sidebar {...this.state} />
 
 						<Content>
 							<Row style={{}}>
