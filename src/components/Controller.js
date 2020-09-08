@@ -64,11 +64,13 @@ class Controller extends React.Component {
 
 		return (
 			<div>
+				
 				{this.props.status.videos.length > 0 && (
 					<Tabs defaultActiveKey="1" className={"controller"}>
 						<TabPane tab="Playing" key="1">
 							<table>
-								<tr>
+								<tbody>
+									<tr>
 									<td style={{width:"50%"}}>
 
 										<div style={{ float: "left", padding: "1em" }}>
@@ -116,7 +118,7 @@ class Controller extends React.Component {
 										<videojs
 											ref={this.videoNode}
 											id="my-video"
-											class="video-js"
+											className="video-js"
 											controls
 											preload="auto"
 											width="640"
@@ -126,6 +128,8 @@ class Controller extends React.Component {
 										></videojs>
 									</td>
 								</tr>
+								</tbody>
+								
 							</table>
 
 								{/* 

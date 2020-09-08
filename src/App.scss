@@ -1,15 +1,63 @@
-@import "~antd/dist/antd.css";
-//@import '~antd/dist/antd.dark.css';
+//@import '~antd/dist/antd.css';
+@import '~antd/dist/antd.dark.css';
 //@import '~antd/dist/antd.compact.css';
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
 
 
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+.ant-layout-sider {
+	background-color: rgba(0, 0, 0, 0.8);
+	padding: 1em;
+	min-width: 300px;
+	font-size: .8em;
+	
+}
+
+.ant-tabs{
+	.ant-tabs-nav-list{
+		button{
+			font-size: .8em;
+			line-height: 1em;
+
+		}
+	
+	}
+	.ant-tabs-tab{
+			color :rgb(71, 71, 71);
+			line-height: 1em;
+	}
+	.ant-tabs-tab-active{
+			color :	rebeccapurple;
+			line-height: 1em;
+	}
+}
 
 
-body{
+.ant-layout {
+	//background-color: rgba(0, 0, 0, 0.8);
+	background: url("./images/headerbackground.jpg");
+	//opacity: 1;
+
+	/* Full height */
+	height: 100%; 
+	/* Center and scale the image nicely */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
 }
-.App {
+
+.ant-layout-content{
+	background-color: rgba(0, 0, 0, 0.7);
+
+	//background-color: #868686;
+	opacity: 1;
+	z-index: 1;
 }
+
 
 Col {
 	margin: 4px;  
@@ -26,73 +74,104 @@ Col {
 
 .controller{
 	height: 200px;
-    border: 1px;
-    padding: 1em;
-    margin-bottom: 3em;
-    background-color: lightgray;
+	border: 1px;
+	padding: 1em;
+	margin-bottom: 3em;
+	//background-color: lightgray;
 }
 h3{
 	font-weight: 700;
 }
 .contentCard{
-	color: white;
+	//color: white;
 	padding: .5em;
 	line-height: 1em;
 	height: 2em;
 	margin: .1em;
-	background-color: rgb(72, 70, 80);
+	//background-color: rgb(72, 70, 80);
 	border-radius: 0%;
 }
-.rotationHeader{
-	border: 1px solid #333333;
-	
-	color: white;
-	padding: .5em;
-	line-height: 1em;
-	height: 2em;
-	margin: .1em;
-	background-color: rgb(72, 70, 80);
-	border-radius: 0%;
+.rotation {
+	background-color: rgba(0, 0, 0, 0.3);
+	padding : 1em;
+	height : 63%;
+	margin-top: 2em;
+	.ant-list{
+		height: 400px;
+		padding: .5em;
+		.ant-btn-sm {
+			font-size : .8em;
+			padding : .1em .5em .2em .5em ;
+			margin: .0em .5em .2em .1em;
+
+		}
+	}
+	.ant-list-footer {
+		float:left;
+		font-size: 1em;
+	}
+	.ant-pagination{
+		float:right;
+		font-size: 1em;
+	}
+	.rotationRow {
+		border-bottom: 1px solid #333;
+		line-height: 1.5em;
+		height: 2em;
+		margin: .2em;
+		//background-color: rgb(238, 234, 234);
+
+		border-radius: 0%;
+		.artist {width: 150px; display: inline-block;}   
+		.title {width: 225px; display: inline-block;}   
+		.album {width: 250px; display: inline-block;}   
+		.year {width: 60px; display: inline-block;}   
+	}
+
 }
-.rotationRow{
+.playlist {
+	vertical-align: top;
+	width: 50%;
+	background-color: rgba(0, 0, 0, 0.3);
 
-	border: 1px solid #868686;
 	padding: .5em;
-	line-height: 1em;
-	height: 2em;
-	margin: .1em;
-	background-color: rgb(238, 234, 234);
-
-	border-radius: 0%;
+	border-right: 5px solid rgba(0, 0, 0, 0);
+	position: relative;
+	height : 33%;
 }
 
 .statistic{
-	color: white;
+	//color: white;
 	padding: 5px;
 	margin: .2em;
-	background-color: rgb(78, 77, 85);
+	//background-color: rgb(78, 77, 85);
 	line-height: 0em;
 }
 
 .library{
-    border: 1px;
-    background-color: lightgray;
-    padding: 1em;
+	background-color: rgba(0, 0, 0, 0.3);
+	border: 1px;
+	padding: 1em;
+	.table{
+		background-color: rgba(0, 0, 0, 0.3);
+	}
 }
 .title{
   font-weight: 400;
 }
+
 .extra{
   font-size: .8rem;
 }
+
 p{
 	margin-bottom: 0px;
 }
+
 .header{
-	background: black;
+	background-color: rgba(0, 0, 0, 0.7);
 	padding: 0 10px;
 	font-size: 2em ;
-	color: white;
 }
 
 #text-filter-column-Year{
@@ -184,5 +263,5 @@ input[type=text] {
 }
 
 .library{
-	min-height: 1000px;
+	min-height: 700px;
 }

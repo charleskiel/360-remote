@@ -56,7 +56,7 @@ class VideoLibrary extends React.Component {
 									filter={filterFactory()}
 									caption={`${this.props.status.videos.length} Videos Available`}
 									BootstrapTable={false}
-									rowStyle={{ lineHeight: ".6em", margin: "3px", backgroundColor: "rgb(240, 242, 245)", borderColor : "black", fontSize : ".8em"}}
+									rowStyle={{ lineHeight: ".6em", margin: "3px", borderColor : "black", fontSize : ".8em"}}
 									pagination={paginationFactory({
 										sizePerPage: 30,
 										sizePerPageList: [{

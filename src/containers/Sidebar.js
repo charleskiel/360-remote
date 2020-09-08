@@ -9,10 +9,10 @@ class Sidebar
   	extends React.Component {
 
 	render(){ 
-		return (<Sider style={{ color: "white", padding: "1em" }}>
+		return (<Sider>
 			Viewers:
-			<p>{this.props.broadcastStatus.timestamp ? <Indicator indicator={this.props.broadcastStatus.timestamp} type="square" /> : <div></div>}Broadcast Status</p>
-			<p>{this.props.controllerTickStatus.timestamp ? <Indicator indicator={this.props.controllerTickStatus.timestamp} type="square" /> : <div></div>}Controller</p>
+			<p>{this.props.broadcastStatus.timestamp ? <Indicator indicator={this.props.broadcastStatus.timestamp} type="square" /> : <span></span>}Broadcast Status</p>
+			<p>{this.props.controllerTickStatus.timestamp ? <Indicator indicator={this.props.controllerTickStatus.timestamp} type="square" /> : <span></span>}Controller</p>
 			<h5 style={{ color: "inherit" }}>Server Stats</h5>
 			<table>
 				<tr>
@@ -45,7 +45,7 @@ class Sidebar
 				</tr>
 			</table>
 			<small>Enter "360" into the box below to control.</small>
-			<input id="commandKey" ref="commandKey" onChange={(evt) => this.setCommandkey(evt)} className={this.props.commandKeyStyle}></input>
+			<input id="commandKey" ref="commandKey" onChange={(evt) => this.props.setCommandkey(evt)} className={this.props.commandKeyStyle}></input>
 		</Sider>
 		)
 		

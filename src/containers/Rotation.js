@@ -1,4 +1,6 @@
 import React from "react";
+import {Button, List } from "antd";
+
 import ContentCard from "../components/ContentCard";
 class Rotation extends React.Component {
 
@@ -15,38 +17,67 @@ class Rotation extends React.Component {
 		if (this.props.status.videos) {
 			return _list.map(_video => {
 				let v = this.props.status.videos[_video]
-				return <tr className="rotationRow">
-					<td><div  style={{ display: "inline - block" , fontSize: ".8em", padding: ".3em" }}><span className="label label-success btn btn-xs" onClick={() => this.props.status.commands.addToQueue(v.id)} >Q</span> <span className="label label-warning btn btn-xs" onClick={() => this.props.status.commands.addToPool(v.id)} >P</span></div></td>
-					<td>{v.Artist}</td>
-					<td>{v.Title}</td>
-					<td>{v.Album}</td>
-					<td>{v.Year}</td>
-				</tr>
+				return <div className="rotationRow">
+					<Button size="small" onClick={() => this.props.status.commands.addToQueue(v.id)} >Q</Button>
+					<Button size="small" onClick={() => this.props.status.commands.addToPool(v.id)} >P</Button>
+					<span className="artist">{v.Artist}</span>
+					<span className="title">{v.Title}</span>
+					<span className="album">{v.Album}</span>
+					<span className="year">{v.Year}</span>
+				</div>
 			})
 		}
 	}
 
 	render() {
-		return (<div>
-				{
-					this.props.status.videos.length > 0 &&
-					
-					<table style={{ width: "100%" }}>
-					<thead>
+		return (
+			<div className="rotation">
+				<h4>Rotation</h4>
 
-						<tr className="rotationHeader">
-							<td>Control</td>
-							<td>Artist</td>
-							<td>Title</td>
-							<td>Album</td>
-							<td>Year</td>
-						</tr>
-					</thead>
-						<tbody>
-							{this.getVideos(this.props.status.rotationSelections.data)} 
-						</tbody>
-					</table>
-			}
+				{this.props.status.videos.length > 0 && (
+					// <table className="rotationTable">
+					// 	<thead>
+					// 		<tr className="rotationHeader">
+					// 			<td>Control</td>
+					// 			<td>Artist</td>
+					// 			<td>Title</td>
+					// 			<td>Album</td>
+					// 			<td>Year</td>
+					// 		</tr>
+					// 	</thead>
+					// 	<tbody>{this.getVideos(this.props.status.rotationSelections.data)}</tbody>
+					// </table>
+
+					<List
+						pagination={{
+							onChange: (page) => {
+								console.log(page);
+							},
+							pageSize: 10,
+							position: "bottom",
+							size: "small",
+							hideOnSinglePage: true,
+						}}
+						header={
+							<div style={{height: "1.5em"}}>
+								<div style={{ float: "left" }}>Rotation</div>
+								<div style={{ float: "right" }}>
+									<Button onClick={() => this.props.status.commands.rotate()} size="small">
+										Rotate
+									</Button>
+								</div>
+							</div>
+						}
+						footer={
+							<div style={{ float: "right" }}>
+							</div>
+						}
+						size="small"
+						bordered
+						dataSource={this.getVideos(this.props.status.rotationSelections.data)}
+						renderItem={(item) => <div>{item}</div>}
+					/>
+				)}
 			</div>
 		);
 	}

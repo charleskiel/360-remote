@@ -1,10 +1,15 @@
 .controller{
+	background-color: rgba(0, 0, 0, 0.3);
+
 	height: 250px;
 	border: 1px;
 	padding: 1em;
 	margin-bottom: 3em;
-	background-color: lightgray;
+	//background-color: lightgray;
 }
 .video-js{
+	border : 1px;
+	border-color: antiquewhite;
+	padding: 1em;
 	float : right;
 }

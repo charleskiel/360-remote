@@ -95,6 +95,30 @@ class App extends Component {
 					})
 				);
 			},
+			clear: () => {
+				this.ws.send(
+					JSON.stringify({
+						messageType : "command",
+						commandData: this.commandData(),
+						data: {
+							class: "broadcastList",
+							command: "clear",
+						},
+					})
+				);
+			},
+			rotate: () => {
+				this.ws.send(
+					JSON.stringify({
+						messageType : "command",
+						commandData: this.commandData(),
+						data: {
+							class: "broadcastList",
+							command: "rotate",
+						},
+					})
+				);
+			},
 			clearPool: () => {
 				this.ws.send(
 					JSON.stringify({
@@ -239,15 +263,15 @@ class App extends Component {
 	render() {
 		return (
 			<div className="App">
+				<div className="bg"></div>
 				<Layout>
 					<Header className="header">(360) Remote Control</Header>
 					<Layout>
-						<Sidebar {...this.state} />
+						<Sidebar {...this.state} setCommandkey={this.setCommandkey} />
 
 						<Content>
 							<Row style={{}}>
 								<Col span={11} style={{ margin: ".5em" }}>
-									<h3>Controller</h3>
 									<Controller status={this.state} toHHMMSS={this.toHHMMSS} />
 
 									<VideoLibrary status={this.state} />
@@ -264,21 +288,22 @@ class App extends Component {
 										</tr>
 										{this.state.videos ? (
 											<tr>
-												<td style={{ verticalAlign: "top", width: "50%", backgroundColor: "lightgrey", padding: ".5em", borderRight: "5px solid #f0f2f5", position: "relative" }}>
+												<td className="playlist">
 													<small>This is the immediate queue.</small>
 													<Playlist status={this.state} playlist={this.state.broadcastListEvent} height={200} />
-													<div style={{
-														display: "inline - block",
-														position: "absolute",
-														bottom: "0",
-														width: "100%",
-														height: "2.5rem"
-													}}
-														>
+													<div
+														style={{
+															display: "inline - block",
+															position: "absolute",
+															bottom: "0",
+															width: "100%",
+															height: "2.5rem",
+														}}
+													>
 														<span
 															style={{ display: "inline - block" }}
 															className="label label-success btn btn-xs"
-															onClick={() => this.state.commands.clearPool()}
+															onClick={() => this.state.commands.clear()}
 														>
 															Clear
 														</span>
@@ -291,13 +316,14 @@ class App extends Component {
 														</span>
 													</div>
 												</td>
-												<td style={{ verticalAlign: "top", width: "50%", backgroundColor: "lightgrey", padding: ".5em" }}>
+
+												<td className="playlist">
 													<h5>Mode Selections</h5>
 													<small>Selections for vote mode. Will auto select when no vote or not in vote mode.</small>
 
 													<div>
 														<Playlist status={this.state} playlist={this.state.modeSelections} height={120} />
-														<h5>modePool</h5> 
+														<h5>modePool</h5>
 														<span
 															style={{ display: "inline - block" }}
 															className="label label-success btn btn-xs"
@@ -313,7 +339,6 @@ class App extends Component {
 											<div></div>
 										)}
 									</table>
-									<h4>Rotation</h4>
 									{this.state.rotationSelections ? <Rotation status={this.state} /> : <div></div>}
 								</Col>
 							</Row>
