@@ -68,10 +68,10 @@ class Controller extends React.Component {
 				{this.props.status.videos.length > 0 && (
 					<Tabs defaultActiveKey="1" className={"controller"}>
 						<TabPane tab="Playing" key="1">
-							<table>
+							<table style={{ width : "100%"}}>
 								<tbody>
 									<tr>
-									<td style={{width:"50%"}}>
+									<td className="progressContainer">
 
 										<div style={{ float: "left", padding: "1em" }}>
 											<Progress
@@ -86,11 +86,13 @@ class Controller extends React.Component {
 												percent={Math.round((this.props.status.controllerTickStatus.frame / this.props.status.controllerTickStatus.frames) * 100)}
 											/>
 										</div>
-										{this.props.status.controllerTickStatus.contentType === "MusicVideo" && (
-											<h4>{`${this.props.status.videos[this.props.status.controllerTickStatus.contentId].Artist} - ${
-												this.props.status.videos[this.props.status.controllerTickStatus.contentId].Title
-											}`}</h4>
-										)}
+											{this.props.status.controllerTickStatus.contentType === "MusicVideo" && (
+												<div>
+
+												<h4>{this.props.status.videos[this.props.status.controllerTickStatus.contentId].Artist}</h4>
+												{this.props.status.videos[this.props.status.controllerTickStatus.contentId].Title}
+												</div>
+											)}
 										{/* <Progress showinfo={"false"} size="small" percent={Math.round((this.props.status.controllerTickStatus.frame / this.props.status.controllerTickStatus.frames) * 100)} /> */}
 
 										<p className={"text-main text-semibold"}>{this.props.toHHMMSS(this.props.status.controllerTickStatus.time)}</p>
@@ -113,7 +115,7 @@ class Controller extends React.Component {
 										</table>
 
 									</td>
-									<td>
+									<td className="videoContainer">
 
 										<videojs
 											ref={this.videoNode}

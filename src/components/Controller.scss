@@ -6,10 +6,15 @@
 	padding: 1em;
 	margin-bottom: 3em;
 	//background-color: lightgray;
+	.progressContainer{
+		width: 55%;
+	}
+	.videoContainer{
+		width: 45%;
+	}
 }
 .video-js{
 	border : 1px;
 	border-color: antiquewhite;
 	padding: 1em;
-	float : right;
 }
