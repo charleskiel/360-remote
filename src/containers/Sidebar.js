@@ -10,6 +10,7 @@ class Sidebar
 
 	render(){ 
 		return (<Sider>
+			<h5>This app controls the broadcast and is a work in progress. Bugs and features are being added daily.</h5>
 			Viewers:
 			<p>{this.props.broadcastStatus.timestamp ? <Indicator indicator={this.props.broadcastStatus.timestamp} type="square" /> : <span></span>}Broadcast Status</p>
 			<p>{this.props.controllerTickStatus.timestamp ? <Indicator indicator={this.props.controllerTickStatus.timestamp} type="square" /> : <span></span>}Controller</p>

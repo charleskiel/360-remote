@@ -73,7 +73,6 @@ class Rotation extends React.Component {
 							</div>
 						}
 						size="small"
-						bordered
 						dataSource={this.getVideos(this.props.status.rotationSelections.data)}
 						renderItem={(item) => <div>{item}</div>}
 					/>

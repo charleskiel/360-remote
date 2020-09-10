@@ -58,7 +58,7 @@ class VideoLibrary extends React.Component {
 									BootstrapTable={false}
 									rowStyle={{ lineHeight: ".6em", margin: "3px", borderColor : "black", fontSize : ".8em"}}
 									pagination={paginationFactory({
-										sizePerPage: 30,
+										sizePerPage: 20,
 										sizePerPageList: [{
 											text: '5th', value: 5
 										}, {

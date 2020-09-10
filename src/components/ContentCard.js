@@ -28,6 +28,11 @@ class ContentCard
 					</Popover>
 					{this.props.video.Artist} - {this.props.video.Title}
 				</div>
+				{this.props.video.votes ?
+					<div style={{ float: "right" }}>
+						Votes {this.props.video.votes}
+					</div> : <div></div>}
+				
 				<div style={{ float: "right" }}>
 					<Indicator />
 					{moment.duration(parseInt(this.props.video.TRT), "seconds").format("mm:ss")}

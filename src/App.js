@@ -178,6 +178,7 @@ class App extends Component {
 		this.ws.onopen = () => {
 			console.log("Connected to Server ", event);
 			this.ws.send(JSON.stringify({ messageType: "login", data: { role: "remote", datetime: Date.Now, regtoken: this.state.regToken, sessionId: this.state.sessionId } }));
+			this.setInterval()
 		};
 
 		this.ws.onerror = () => {
@@ -207,21 +208,31 @@ class App extends Component {
 					this.alertCommandkey(msg.response)
 					break;
 				case "statusRefresh":
-					console.log(msg);
-					if (msg.rotationSelections) this.setState({ rotationSelections: msg.rotationSelections });
-					this.setState({ modePool: msg.modePool });
-					this.setState({ modeSelections: msg.modeSelections });
-					this.setState({ broadcastListEvent: msg.broadcastListEvent });
-					this.setState({ serverStatus: msg.serverStatus });
-					console.log(this.state);
+					//console.log(msg);
+					if (msg.data.rotationSelections) this.setState({ rotationSelections: msg.data.rotationSelections });
+					this.setState({ modePool: msg.data.modePool });
+					this.setState({ modeSelections: msg.data.modeSelections });
+					this.setState({ broadcastListEvent: msg.data.broadcastListEvent });
+					this.setState({ serverStatus: msg.data.serverStatus });
+					//console.log(this.state);
+					break;
+				case "serverStatus":
+					//console.log(msg);
+					if (msg.data.rotationSelections) this.setState({ rotationSelections: msg.data.rotationSelections });
+					this.setState({ serverStatus: msg.data });
+					//console.log(this.state);
 					break;
 				default:
 					this.setState({ [msg.messageType]: { ...msg, timestamp: Date.now() } });
-				//console.log(this.state)
+					//console.log(this.state)
 			}
 		};
 	}
 
+	setInterval = () => {
+
+		
+	}
 	removevideo = (video) => {
 		let _army = this.state.playlist.filter((item) => {
 			return item !== video;
@@ -278,18 +289,11 @@ class App extends Component {
 								</Col>
 								<Col span={12} style={{ margin: ".5em" }}>
 									<table style={{ width: "100%" }}>
-										<tr>
-											<td>
-												<h3>Current Playlist</h3>
-											</td>
-											<td>
-												<h3>Selections</h3>
-											</td>
-										</tr>
+										
 										{this.state.videos ? (
 											<tr>
 												<td className="playlist">
-													<small>This is the immediate queue.</small>
+													<small>Current queue.</small>
 													<Playlist status={this.state} playlist={this.state.broadcastListEvent} height={200} />
 													<div
 														style={{
